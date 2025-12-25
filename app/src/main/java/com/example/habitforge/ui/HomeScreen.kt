@@ -80,34 +80,59 @@ fun HabitItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp)
-            .clickable { onClick() }
+            .padding(vertical = 8.dp)
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        elevation = CardDefaults.cardElevation(6.dp),
+        shape = MaterialTheme.shapes.medium
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(18.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Column {
-                Text(text = habit.title, style = MaterialTheme.typography.titleMedium)
-                Text(text = habit.description, style = MaterialTheme.typography.bodySmall)
+            // 🔥 Flame using emoji (no icon dependency)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "🔥",
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize   // Big flame icon
+                )
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column {
+                    Text(
+                        text = habit.title,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        text = "1 day",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+                }
             }
 
+            // ✔ Bigger Check Circle Button
+// ✔ Bigger Check Circle Button (Green when done / Red when not)
             IconButton(
-                onClick = { onCheckClick(!habit.isCompleted) }
+                onClick = { onCheckClick(!habit.isCompleted) },
+                modifier = Modifier.size(52.dp) // Larger touch area
             ) {
                 Icon(
                     imageVector = Icons.Filled.CheckCircle,
                     contentDescription = "Mark Completed",
                     tint = if (habit.isCompleted)
-                        MaterialTheme.colorScheme.primary
+                        androidx.compose.ui.graphics.Color(0xFF4CAF50) // GREEN CHECK
                     else
-                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                        androidx.compose.ui.graphics.Color(0xFFD32F2F), // RED CHECK
+                    modifier = Modifier.size(40.dp)
                 )
             }
+
         }
     }
 }
