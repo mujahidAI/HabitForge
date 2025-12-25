@@ -3,45 +3,27 @@ package com.example.habitforge
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.habitforge.ui.theme.HabitForgeTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.habitforge.data.HabitDatabase
+import com.example.habitforge.navigation.AppNavGraph
+import com.example.habitforge.viewmodel.HabitViewModel
+import com.example.habitforge.viewmodel.HabitViewModelFactory
+import androidx.compose.material3.MaterialTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        // Build Room database + DAO
+        val dao = HabitDatabase.getDatabase(applicationContext).habitDao()
+
+        // Provide DAO to ViewModel
+        val habitViewModel = HabitViewModelFactory(dao).create(HabitViewModel::class.java)
+
         setContent {
-            HabitForgeTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+            MaterialTheme {
+                AppNavGraph() // Start navigation and screens
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    HabitForgeTheme {
-        Greeting("Android")
     }
 }
