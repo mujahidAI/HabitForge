@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,13 +24,11 @@ fun HomeScreen(
     navController: NavController,
     viewModel: HabitViewModel = viewModel(factory = HabitViewModelFactoryProvider.provide())
 ) {
-    // Collect flow properly for Compose
+    // Collect StateFlow as State for Compose
     val habits by viewModel.habits.collectAsState()
 
-    // Load habits when entering screen
-    LaunchedEffect(Unit) {
-        viewModel.loadHabits()
-    }
+    // Load habits when screen first opens
+    LaunchedEffect(Unit) { viewModel.loadHabits() }
 
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -47,9 +46,13 @@ fun HomeScreen(
 
             LazyColumn {
                 items(habits) { habit ->
-                    HabitItem(habit) {
-                        navController.navigate("details/${habit.id}")
-                    }
+                    HabitItem(
+                        habit = habit,
+                        onClick = { navController.navigate("details/${habit.id}") },
+                        onCheckClick = { isChecked ->
+                            viewModel.setCompleted(habit.id, isChecked)
+                        }
+                    )
                 }
             }
         }
@@ -71,17 +74,40 @@ fun HomeScreen(
 @Composable
 fun HabitItem(
     habit: Habit,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onCheckClick: (Boolean) -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp)
-            .clickable(onClick = onClick)
+            .clickable { onClick() }
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = habit.title, style = MaterialTheme.typography.titleMedium)
-            Text(text = habit.description, style = MaterialTheme.typography.bodySmall)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Column {
+                Text(text = habit.title, style = MaterialTheme.typography.titleMedium)
+                Text(text = habit.description, style = MaterialTheme.typography.bodySmall)
+            }
+
+            IconButton(
+                onClick = { onCheckClick(!habit.isCompleted) }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.CheckCircle,
+                    contentDescription = "Mark Completed",
+                    tint = if (habit.isCompleted)
+                        MaterialTheme.colorScheme.primary
+                    else
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                )
+            }
         }
     }
 }
