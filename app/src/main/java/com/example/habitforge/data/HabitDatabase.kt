@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [Habit::class],
-    version = 1,
+    version = 2, // ⬅️ BUMPED VERSION from 1 → 2
     exportSchema = false
 )
 abstract class HabitDatabase : RoomDatabase() {
@@ -23,8 +23,12 @@ abstract class HabitDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     HabitDatabase::class.java,
-                    "habit_db"
-                ).build()
+                    "habit_database"
+                )
+                    // 🔥 Important: Allows DB update after model change
+                    .fallbackToDestructiveMigration()
+                    .build()
+
                 INSTANCE = instance
                 instance
             }

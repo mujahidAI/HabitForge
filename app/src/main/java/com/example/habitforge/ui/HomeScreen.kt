@@ -82,7 +82,12 @@ fun HabitItem(
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable { onClick() },
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        colors = CardDefaults.cardColors(
+            containerColor = if (habit.isCompleted)
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)  // light green
+            else
+                MaterialTheme.colorScheme.surfaceVariant              // default color
+        ),
         elevation = CardDefaults.cardElevation(6.dp),
         shape = MaterialTheme.shapes.medium
     ) {
@@ -94,11 +99,12 @@ fun HabitItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            // 🔥 Flame using emoji (no icon dependency)
+            // 🔥 Flame Emoji & Streak Count
             Row(verticalAlignment = Alignment.CenterVertically) {
+
                 Text(
                     text = "🔥",
-                    fontSize = MaterialTheme.typography.titleLarge.fontSize   // Big flame icon
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize
                 )
 
                 Spacer(modifier = Modifier.width(12.dp))
@@ -109,30 +115,28 @@ fun HabitItem(
                         style = MaterialTheme.typography.titleMedium
                     )
                     Text(
-                        text = "1 day",
+                        text = "${habit.streak} day${if (habit.streak == 1) "" else "s"}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 }
             }
 
-            // ✔ Bigger Check Circle Button
-// ✔ Bigger Check Circle Button (Green when done / Red when not)
+            // ✔ CHECK BUTTON (Green when done, Red when not)
             IconButton(
                 onClick = { onCheckClick(!habit.isCompleted) },
-                modifier = Modifier.size(52.dp) // Larger touch area
+                modifier = Modifier.size(52.dp)
             ) {
                 Icon(
                     imageVector = Icons.Filled.CheckCircle,
                     contentDescription = "Mark Completed",
                     tint = if (habit.isCompleted)
-                        androidx.compose.ui.graphics.Color(0xFF4CAF50) // GREEN CHECK
+                        androidx.compose.ui.graphics.Color(0xFF4CAF50) // GREEN ✔ completed
                     else
-                        androidx.compose.ui.graphics.Color(0xFFD32F2F), // RED CHECK
+                        androidx.compose.ui.graphics.Color(0xFFD32F2F), // RED ✖ not completed
                     modifier = Modifier.size(40.dp)
                 )
             }
-
         }
     }
 }

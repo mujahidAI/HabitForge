@@ -8,5 +8,9 @@ data class Habit(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val title: String,
     val description: String,
-    val isCompleted: Boolean = false // simple done/not-done state
+    val isCompleted: Boolean = false,
+
+    // 🔥 NEW FIELDS FOR STREAKS
+    val streak: Int = 0,
+    val lastCompletedDate: String? = null
 )
