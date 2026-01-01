@@ -3,34 +3,28 @@ package com.example.habitforge.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.habitforge.viewmodel.HabitViewModel
-import com.example.habitforge.viewmodel.HabitViewModelFactoryProvider
-import com.example.habitforge.data.Habit
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 
 @Composable
 fun HabitDetailsScreen(
     navController: NavController,
     habitId: Int,
-    viewModel: HabitViewModel = viewModel(factory = HabitViewModelFactoryProvider.provide())
+    viewModel: HabitViewModel // <-- ViewModel now passed in, not created here
 ) {
-    // Collect state safely for Compose
-    val habits by viewModel.habits.collectAsState()
+    // Load habits on screen open
+    LaunchedEffect(Unit) {
+        viewModel.loadHabits()
+    }
 
-    // Load habits (only once)
-    LaunchedEffect(Unit) { viewModel.loadHabits() }
-
-    // Look up habit by id
+    val habits = viewModel.habits.collectAsState().value
     val habit = habits.find { it.id == habitId }
 
-    // If still loading or not yet found
     if (habit == null) {
-        Text("Loading habit...", modifier = Modifier.padding(16.dp))
+        Text("Habit not found")
         return
     }
 
@@ -43,8 +37,8 @@ fun HabitDetailsScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text("Edit Habit", style = MaterialTheme.typography.headlineMedium)
 
+        Text("Edit Habit", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
@@ -70,20 +64,18 @@ fun HabitDetailsScreen(
                 checked = isCompleted,
                 onCheckedChange = {
                     isCompleted = it
-                    viewModel.setCompleted(habitId, it) // update instantly
+                    viewModel.setCompleted(habitId, it)
                 }
             )
-            Text("Completed?")
+            Text(text = "Completed?")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Update Habit
         Button(
             onClick = {
                 viewModel.updateHabit(
-                    Habit(
-                        id = habitId,
+                    habit.copy(
                         title = title,
                         description = description,
                         isCompleted = isCompleted
@@ -98,7 +90,6 @@ fun HabitDetailsScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Delete Habit
         Button(
             onClick = {
                 viewModel.deleteHabit(habit)

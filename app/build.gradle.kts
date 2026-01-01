@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.example.habitforge"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.habitforge"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -62,6 +62,7 @@ dependencies {
     // --- Room Database
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
+    implementation(libs.androidx.ui)
     kapt("androidx.room:room-compiler:2.6.1")
 
     // --- Retrofit API client

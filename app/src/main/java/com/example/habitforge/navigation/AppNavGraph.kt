@@ -6,12 +6,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.habitforge.viewmodel.HabitViewModel
 import com.example.habitforge.ui.AddHabitScreen
 import com.example.habitforge.ui.HabitDetailsScreen
 import com.example.habitforge.ui.HomeScreen
 
 @Composable
-fun AppNavGraph() {
+fun AppNavGraph(viewModel: HabitViewModel) {
     val navController = rememberNavController()
 
     NavHost(
@@ -19,20 +20,23 @@ fun AppNavGraph() {
         startDestination = "home"
     ) {
 
+        // 🏠 Home Screen
         composable("home") {
-            HomeScreen(navController)
+            HomeScreen(navController, viewModel)
         }
 
+        // ➕ Add Habit Screen
         composable("add") {
-            AddHabitScreen(navController)
+            AddHabitScreen(navController, viewModel)
         }
 
+        // 📌 Habit Details Screen
         composable(
             route = "details/{habitId}",
             arguments = listOf(navArgument("habitId") { type = NavType.IntType })
         ) { backStackEntry ->
             val habitId = backStackEntry.arguments?.getInt("habitId") ?: 0
-            HabitDetailsScreen(navController, habitId)
+            HabitDetailsScreen(navController, habitId, viewModel)
         }
     }
 }

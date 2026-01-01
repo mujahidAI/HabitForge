@@ -3,26 +3,25 @@ package com.example.habitforge
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.habitforge.data.HabitDatabase
+import androidx.compose.material3.MaterialTheme
+import androidx.lifecycle.ViewModelProvider
 import com.example.habitforge.navigation.AppNavGraph
 import com.example.habitforge.viewmodel.HabitViewModel
-import com.example.habitforge.viewmodel.HabitViewModelFactory
-import androidx.compose.material3.MaterialTheme
+import com.example.habitforge.viewmodel.HabitViewModelFactoryProvider
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Build Room database + DAO
-        val dao = HabitDatabase.getDatabase(applicationContext).habitDao()
-
-        // Provide DAO to ViewModel
-        val habitViewModel = HabitViewModelFactory(dao).create(HabitViewModel::class.java)
+        // Get ViewModel through factory provider
+        val factory = HabitViewModelFactoryProvider.provide(application)
+        val habitViewModel = ViewModelProvider(this, factory)
+            .get(HabitViewModel::class.java)
 
         setContent {
             MaterialTheme {
-                AppNavGraph() // Start navigation and screens
+                // Pass shared ViewModel into navigation
+                AppNavGraph(habitViewModel)
             }
         }
     }

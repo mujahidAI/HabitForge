@@ -8,14 +8,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.habitforge.viewmodel.HabitViewModel
-import com.example.habitforge.viewmodel.HabitViewModelFactoryProvider
 
 @Composable
 fun AddHabitScreen(
     navController: NavController,
-    viewModel: HabitViewModel = viewModel(factory = HabitViewModelFactoryProvider.provide())
+    viewModel: HabitViewModel // <-- ViewModel is passed from NavGraph, no need to recreate
 ) {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
